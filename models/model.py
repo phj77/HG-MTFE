@@ -14,3 +14,10 @@ class conv2d_block(nn.Module):
     def forward(self, x):
         x = self.block(x)
         return x
+    
+class conv1d_block(nn.modules):
+    def __init__():
+        super.__init__()
+    def forward():
+
+
