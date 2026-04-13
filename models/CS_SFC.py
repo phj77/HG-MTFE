@@ -54,7 +54,7 @@ class SFC_module(nn.Module):
         return x
 
 
-class channel_scale(nn.modules):
+class channel_scale(nn.modules): # in: (n,n,c) out: (n,n,c)
     def __init__(self, in_ch):
         super.__init__(self)
         self.gap = nn.AdaptiveAvgPool2d(1)
@@ -64,7 +64,7 @@ class channel_scale(nn.modules):
 
     def forward(self, x): # x:(n,n,c)
 
-        ###### shape 변환 -> gap / conv 방향 조절 필요!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        ###### shape 변환 -> gap / conv 방향 조절 필요????????????????????????!!!!!!!!!!!!!!!!!!!!!!!!!!!
         x_a = self.gap(x)
         x_m = self.gmp(x)
         x_a = self.conv_1d(x_a)
@@ -76,28 +76,33 @@ class channel_scale(nn.modules):
         return x
         
 
-class CS_SFC(nn.modules): # in_channel: out_channel: kernel:
+class CS_SFC(nn.modules): # in: (n,n,c) out: ((1/2)**6*n,(1/2)**6*n,  2**7*c)
     def __init__(self, in_ch):
         super.__init__()
+
         expansion = 4
         self.sfc_iteration = 7
         in_channel = in_ch
+
         self.sfc = nn.ModuleList()
         for i in range(1, self.sfc_iteration+1):
 
             # x:(n,n,c)
             self.sfc.append(SFC_module(in_ch=in_channel, out_ch=in_channel*2 ,expansion=expansion, num=i)) 
-            # x:(n/2, n/2, c*2)
+            # nun!=1 -> x:(n/2, n/2, c*2), num==1 -> x:(n,n,2c)
 
             in_channel = in_channel*2
             self.sfc.append(channel_scale(in_channel))
+            # x:(n/2, n/2, c*2)
 
             
 
     def forward(self, x): # x:(256, 256, 6)
         for sfc_layer in self.sfc:
             x = sfc_layer(x)
-        # x:(n,n,c)
+        # x:(2,2,768)
+
+        return x
 
         
 
