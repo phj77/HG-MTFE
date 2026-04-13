@@ -3,6 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from blocks import conv1d_block, conv2d_block
 from CS_SFC import CS_SFC
+from HGA import HGA
 
 class IFE(nn.modules): # in: (n,n, c) out: (1,1,2306). 2306 = num_trans * 768
     def __init__(self, in_ch):
@@ -27,7 +28,7 @@ class IFE(nn.modules): # in: (n,n, c) out: (1,1,2306). 2306 = num_trans * 768
         x = self.layer3(x)
         x = self.layer4(x)
 
-        return x
+        return x #(1,1,2306)
 
 
 class HG_MTFE(nn.modules):
